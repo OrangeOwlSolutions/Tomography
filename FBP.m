@@ -9,16 +9,16 @@ load(dataFileName);
 
 % --- Smallest power of 2 greater than numDetectors
 n1 = ceil(log(numDetectors) / log(2)); 
-% N = 2^n1;                  
-N = 2^(n1 + 1);
+N = 2^n1;                  
+% N = 2^(n1 + 1);
 
 % --- Inter-detector distance
-dr = (max(detectorPositions) - min(detectorPositions)) / (numDetectors - 1);  
+dt = (max(detectorPositions) - min(detectorPositions)) / (numDetectors - 1);  
 
 % --- Maximum range value after zero padding
-rmax = dr * N;             
+tmax = dt * N;             
 % --- Sampling step in the frequency domain
-dW = 1 / rmax;         
+dW = 1 / tmax;         
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ZERO-PADDED FFTs OF THE PROJECTIONS %
@@ -43,11 +43,11 @@ for currentProjection = 1 : numProjections,
     
     theta = angles(currentProjection);
 
-    rho1 = XX * cos(theta) + YY * sin(theta);
+    t1 = XX * cos(theta) + YY * sin(theta);
   
-    currentReconstruction = filteredProjections(currentProjection, 1:numDetectors);
+    currentReconstruction = filteredProjections(currentProjection, 1 : numDetectors);
 
-    Reconstruction = Reconstruction + interp1(detectorPositions, currentReconstruction, rho1, 'linear');   
+    Reconstruction = Reconstruction + interp1(detectorPositions, currentReconstruction, t1, 'linear');   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%
