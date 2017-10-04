@@ -13,7 +13,7 @@ n1 = ceil(log(numDetectors) / log(2));
 N = 2^(n1 + 1);
 
 % --- Inter-detector distance
-dr = (max(detectorPositions) - min(detectorPositions)) / (numDetectors - 1);  
+dt = (max(detectorPositions) - min(detectorPositions)) / (numDetectors - 1);  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % ZERO-PADDED FFTs OF THE PROJECTIONS %
@@ -27,9 +27,9 @@ filteredProjectionSpectra = fft(sinogram.', N);        % --- Padded FFT is perfo
 h = zeros(N, 1);
 h(1)                           = 1 / 4;                                            % --- n = 0
 h(2 :  2 : (N / 2))            = -1 ./ (((2 : 2 : (N / 2)) - 1).^2 * pi^2);        % --- n odd
-h(N : -2 : (N - N / 2 + 2))    = h(2 : 2 : (N / 2));                                % --- n even
+h(N : -2 : (N - N / 2 + 2))    = h(2 : 2 : (N / 2));                               
 
-H = fft(h) / dr;                    % --- Padded FFT is performed for every column
+H = fft(h) / dt;                    % --- Padded FFT is performed for every column
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FILTERING IN THE SPECTRAL DOMAIN %
@@ -48,11 +48,11 @@ for currentProjection = 1 : numProjections,
     
     theta = angles(currentProjection);
 
-    rho1 = XX * cos(theta) + YY * sin(theta);
+    t1 = XX * cos(theta) + YY * sin(theta);
 
     currentReconstruction = filteredProjections(currentProjection, 1 : numDetectors);
 
-    Reconstruction = Reconstruction + interp1(detectorPositions, currentReconstruction, rho1, 'linear');   
+    Reconstruction = Reconstruction + interp1(detectorPositions, currentReconstruction, t1, 'linear');   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%
